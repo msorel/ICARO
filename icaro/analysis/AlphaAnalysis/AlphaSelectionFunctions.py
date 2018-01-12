@@ -154,4 +154,34 @@ def inclusiveAlphaFilter(
     
     return selInclusiveAlphas, inputEntries, outputEntries
 
-          
+
+#------------------------------------------------------
+
+def fiducialFilter(
+        data,
+        minZ=-np.inf, maxZ=np.inf,
+        maxRadius=np.inf):
+    """ 
+    Selection of KDST entries based on Z and radial position
+
+    Parameters:
+    -----------
+    data: panda dataframe
+    minZ, maxZ: minimum and maximum Z position
+    maxRadius: maximum radial position
+
+    Returns:
+    --------
+    selFiducial: boolean np.array, one entry per data row
+    inputEntries: input number of entries
+    outputEntries: output number of entries
+    """
+
+    selZ = coref.in_range(data.Z, minZ, maxZ)
+    selRadius = data.R < maxRadius
+    selFiducial = np.logical_and(selZ, selRadius)
+
+    inputEntries = len(selFiducial)
+    outputEntries = sum(selFiducial)
+
+    return selFiducial, inputEntries, outputEntries
