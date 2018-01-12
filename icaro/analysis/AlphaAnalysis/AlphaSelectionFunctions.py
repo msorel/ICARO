@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 """
-Set of functions to perform event selection for AlphaAnalysis
-In all functions, the data frames are assumed to be in the KDST form
+Set of functions to perform event selection in AlphaAnalysis jupyter notebooks
+In all functions, the data frames are assumed to be in KDST form
 """
 
 import os
@@ -25,10 +25,11 @@ import invisible_cities.reco.corrections    as corrf
 
 #------------------------------------------------------
 
-def s1Filter(data,
-             minCharge=-np.inf,    maxCharge=np.inf,
-             minWidth=-np.inf,     maxWidth=np.inf,
-             minStartTime=-np.inf, maxStartTime=np.inf):
+def s1Filter(
+        data,
+        minCharge=-np.inf,    maxCharge=np.inf,
+        minWidth=-np.inf,     maxWidth=np.inf,
+        minStartTime=-np.inf, maxStartTime=np.inf):
     """ 
     Selection of S1 peaks based on peak charge, time width, start time
 
@@ -51,17 +52,18 @@ def s1Filter(data,
 
     sel          = np.logical_and(selCharge, selWidth)
     sel          = np.logical_and(sel,       selStartTime)
-    inputEntries=len(sel)
-    outputEntries=sum(sel)
+    inputEntries = len(sel)
+    outputEntries = sum(sel)
 
     return sel, inputEntries, outputEntries
 
 #------------------------------------------------------
 
-def s2Filter(data,
-             minCharge=-np.inf,    maxCharge=np.inf,
-             minWidth=-np.inf,     maxWidth=np.inf,
-             minStartTime=-np.inf, maxStartTime=np.inf):
+def s2Filter(
+        data,
+        minCharge=-np.inf,    maxCharge=np.inf,
+        minWidth=-np.inf,     maxWidth=np.inf,
+        minStartTime=-np.inf, maxStartTime=np.inf):
     """ 
     Selection of S2 peaks based on peak charge, time width, start time
 
@@ -84,20 +86,21 @@ def s2Filter(data,
 
     sel          = np.logical_and(selCharge, selWidth)
     sel          = np.logical_and(sel,       selStartTime)
-    inputEntries=len(sel)
-    outputEntries=sum(sel)
+    inputEntries = len(sel)
+    outputEntries = sum(sel)
 
     return sel, inputEntries, outputEntries
 
 #------------------------------------------------------
 
-def inclusiveAlphaFilter(data,
-                         minS1Charge=-np.inf,    maxS1Charge=np.inf,
-                         minS1Width=-np.inf,     maxS1Width=np.inf,
-                         minS1StartTime=-np.inf, maxS1StartTime=np.inf,
-                         minS2Charge=-np.inf,    maxS2Charge=np.inf,
-                         minS2Width=-np.inf,     maxS2Width=np.inf,
-                         minS2StartTime=-np.inf, maxS2StartTime=np.inf):
+def inclusiveAlphaFilter(
+        data,
+        minS1Charge=-np.inf,    maxS1Charge=np.inf,
+        minS1Width=-np.inf,     maxS1Width=np.inf,
+        minS1StartTime=-np.inf, maxS1StartTime=np.inf,
+        minS2Charge=-np.inf,    maxS2Charge=np.inf,
+        minS2Width=-np.inf,     maxS2Width=np.inf,
+        minS2StartTime=-np.inf, maxS2StartTime=np.inf):
     """
     Inclusive alpha selection
     Goal: keep events with one and only one alpha-like S1, and one and only one alpha-like S2
@@ -124,14 +127,17 @@ def inclusiveAlphaFilter(data,
     """
 
     # First: select KDST entries where the S1 and S2 peaks are both alpha-like
-    selS1 = s1Filter(data,
-                     minS1Charge,    maxS1Charge,
-                     minS1Width,     maxS1Width,
-                     minS1StartTime, maxS1StartTime)[0]
-    selS2 = s2Filter(data,
-                     minS2Charge,    maxS2Charge,
-                     minS2Width,     maxS2Width,
-                     minS2StartTime, maxS2StartTime)[0]
+    selS1 = s1Filter(
+        data,
+        minS1Charge,    maxS1Charge,
+        minS1Width,     maxS1Width,
+        minS1StartTime, maxS1StartTime)[0]
+    
+    selS2 = s2Filter(
+        data,
+        minS2Charge,    maxS2Charge,
+        minS2Width,     maxS2Width,
+        minS2StartTime, maxS2StartTime)[0]
 
     selAlphaLikePeaks = np.logical_and(selS1, selS2)
 
@@ -140,11 +146,11 @@ def inclusiveAlphaFilter(data,
 
     # Third: make an AND between the alpha-like peaks selection and the unique alpha selection
     # First fill an array with zeros, with as many elements as the inoput data frame
-    selInclusiveAlphas=np.zeros_like(selAlphaLikePeaks)
+    selInclusiveAlphas = np.zeros_like(selAlphaLikePeaks)
     # Only for those entries satisfying the alpha-like peak selection, set them to true if they also satisfy the unique alpha selection
-    selInclusiveAlphas[selAlphaLikePeaks]=selUniqueAlpha
-    inputEntries=len(selInclusiveAlphas)
-    outputEntries=sum(selInclusiveAlphas)
+    selInclusiveAlphas[selAlphaLikePeaks] = selUniqueAlpha
+    inputEntries = len(selInclusiveAlphas)
+    outputEntries = sum(selInclusiveAlphas)
     
     return selInclusiveAlphas, inputEntries, outputEntries
 
